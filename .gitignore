@@ -1,0 +1,7 @@
+/Debug
+/Two/Debug
+
+*.vcproj.*.user
+*.ncb
+*.aps
+*.suo

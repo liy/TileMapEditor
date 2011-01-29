@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" width="1680" height="1024">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.aircapsule.tileMap.TilesetManager;
+			import com.aircapsule.tileMap.auxiliary.InputManager;
+			import com.aircapsule.tileMap.history.HistoryManager;
+			import com.aircapsule.tileMap.layers.LayerManager;
+			import com.aircapsule.tileMap.ui.LayerContainer;
+			import com.aircapsule.tileMap.ui.LayerInfoPanel;
+			import com.aircapsule.tileMap.ui.TilesetPanel;
+			
+			import mx.collections.XMLListCollection;
+			import mx.core.UIComponent;
+			
+			import nl.demonsters.debugger.MonsterDebugger;
+			
+			public var menuBarCollection:XMLListCollection;
+				
+			public function initMenuBar():void{
+				var menubarXML:XMLList =<>
+								<menuitem label="Menu1">
+									<menuitem label="MenuItem 1-A" data="1A"/>
+									<menuitem label="MenuItem 1-B" data="1B"/>
+								</menuitem>
+								<menuitem label="Menu2">
+									<menuitem label="MenuItem 2-A" data="2A"/>
+									<menuitem label="MenuItem 2-B" data="2B"/>
+								</menuitem>
+								<menuitem label="Menu3" data="M3"/>
+								</>;
+				
+				menuBarCollection = new XMLListCollection(menubarXML);
+				
+				MonsterDebugger.trace(this, "initialize menubar");
+			}
+			
+			public function init():void{
+				InputManager.getInstance().init(this.stage);
+				
+				// initialize history manager
+				HistoryManager.getInstance().init(this.stage);
+				
+				var layerInfoPanel:LayerInfoPanel = new LayerInfoPanel(sidePanelGroup);
+				layerInfoPanelGroup.addElement(layerInfoPanel);
+				
+				var layerContainer:LayerContainer = new LayerContainer(bgfill, 5000, 800);
+				layerContainerGroup.addElement(layerContainer);
+				
+				// create layer manager
+				var layerManager:LayerManager = LayerManager.getInstace();
+				layerManager.init(layerContainer, layerInfoPanel, layerContainer.rows, layerContainer.cols);
+				for(var i:uint=0; i<3; ++i){
+					layerManager.createLayer();
+				}
+				layerManager.selectLayerByIndex(0);
+				
+				var tilesetPanel:TilesetPanel = new TilesetPanel(tilesetPanelGroup, tilesetDropDown);
+				tilesetPanelGroup.addElement(tilesetPanel);
+				
+				TilesetManager.getInstace().init(tilesetDropDown, tilesetPanel);
+				TilesetManager.getInstace().openTileset("tileset.png");
+//				TilesetManager.getInstace().openTileset("image.jpg");
+			}
+		]]>
+	</fx:Script>
+	
+	<s:creationComplete>
+		<![CDATA[
+		initMenuBar();
+		]]>
+	</s:creationComplete>
+	
+	<s:applicationComplete>
+		<![CDATA[
+			init();
+		]]>
+	</s:applicationComplete>
+	
+	<s:VGroup width="100%" height="100%">
+		<mx:MenuBar labelField="@label" width="100%" dataProvider="{menuBarCollection}">
+		</mx:MenuBar>
+		<s:HGroup width="100%" height="100%">
+			
+			<s:Group width="80%" height="100%">
+				<s:Scroller width="100%" height="100%">
+					<s:Group id="layerContainerGroup">
+						<s:Rect id="bgfill"/>
+					</s:Group>
+				</s:Scroller>
+			</s:Group>
+			
+			<s:VGroup id="sidePanelGroup" width="20%" height="100%">
+				
+				<s:VGroup id="tilesetPanelGroup" width="100%" height="70%">
+					<s:DropDownList id="tilesetDropDown" x="0" y="0" width="100%">
+					</s:DropDownList>
+				</s:VGroup>
+				
+				<s:Group id="layerInfoPanelGroup" width="100%" height="30%">
+				</s:Group>
+				
+			</s:VGroup>
+		</s:HGroup>
+	</s:VGroup>
+	
+	
+</s:WindowedApplication>

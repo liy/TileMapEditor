@@ -1,0 +1,4 @@
+/.setitings/org.eclipse.core.resources.prefs -crlf -diff
+.flexProperties -crlf -diff
+.actionScriptProperties -crlf -diff
+.project -crlf -diff
